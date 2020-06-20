@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon src/app",
+    "build": "sucrase ./src -d ./dist --transforms imports",
+    "start": "node dist/app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,5 +14,9 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4",
+    "sucrase": "^3.15.0"
   }
 }
