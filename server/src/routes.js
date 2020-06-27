@@ -1,5 +1,6 @@
 import express from 'express';
 import UserController from './controllers/UserController';
+import HourController from './controllers/HourController';
 
 const routes = express.Router();
 
@@ -11,6 +12,9 @@ routes.post('/users', UserController.create);
 routes.get('/users', UserController.index);
 routes.put('/users/:id', UserController.update);
 
-routes.get('/users', UserController.index);
+routes.post('/hours', HourController.create);
+routes.get('/hours', HourController.index);
+routes.get('/hours/:user_id', HourController.list);
+routes.delete('/hours/:id', HourController.delete)
 
 export default routes;
