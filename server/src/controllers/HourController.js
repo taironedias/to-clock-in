@@ -18,4 +18,14 @@ export default {
         return res.json(hours);
     },
 
+    async list(req, res) {
+        const { user_id } = req.params;
+
+        const hours = await connection('hours')
+            .where('user_id', user_id)
+            .select('*');
+        
+            return res.json(hours);
+    },
+
 }
