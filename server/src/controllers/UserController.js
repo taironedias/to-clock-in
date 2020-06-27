@@ -13,7 +13,7 @@ export default {
 
         const permission = rootUsers.includes(name.toLowerCase()) ? 'root' : 'default';
 
-        await connection('users').insert({
+        const [id] = await connection('users').insert({
             login,
             password,
             name,
@@ -21,7 +21,7 @@ export default {
             permission
         });
 
-        return res.json({ success: true });
+        return res.json({ user_id: id });
     },
 
     async index(req, res) {
