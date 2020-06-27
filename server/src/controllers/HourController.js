@@ -13,4 +13,9 @@ export default {
         return res.json({ id });
     },
 
+    async index(req, res) {
+        const hours = await connection('hours').select('*');
+        return res.json(hours);
+    },
+
 }
