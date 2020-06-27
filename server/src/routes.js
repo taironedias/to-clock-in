@@ -8,6 +8,8 @@ routes.get('/', (req, res) => {
 });
 
 routes.post('/users', UserController.create);
+routes.get('/users', UserController.index);
+routes.put('/users/:id', UserController.update);
 
 routes.get('/users', UserController.index);
 
