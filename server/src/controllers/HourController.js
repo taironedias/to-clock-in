@@ -29,6 +29,31 @@ export default {
             return res.json(hours);
     },
 
+    /** Edita um ponto (data e hora) de um usuário */
+    async update(req, res) {
+        const { id } = req.params;
+        const user_id = req.headers.authorization;
+        const { punch_clock } = req.body;
+
+        await connection('hours')
+            .where({
+                id,
+                user_id
+            })
+            .update('punch_clock', punch_clock)
+            .then((data) => {
+                if (!data) {
+                    res.status(400).json({ error: 'Hour not found for update' });
+                }
+
+                return res.status(204).send();
+            })
+            .catch((err) => {
+                console.log(err);
+                throw err;
+            });
+    },
+
     /** Remove um ponto salvo para um usuário */
     async delete(req, res) {
         const { id } = req.params;
