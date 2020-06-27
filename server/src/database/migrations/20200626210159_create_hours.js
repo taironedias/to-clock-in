@@ -2,10 +2,10 @@
 exports.up = function(knex) {
     return knex.schema.createTable('hours', function(table) {
         table.increments();
-        table.integer('idUser').unsigned().notNullable();
-        table.dateTime('punchClock').notNullable();
+        table.integer('user_id').unsigned().notNullable();
+        table.dateTime('punch_clock').notNullable();
         
-        table.foreign('idUser').references('id').inTable('users');
+        table.foreign('user_id').references('id').inTable('users');
     });
 };
 
