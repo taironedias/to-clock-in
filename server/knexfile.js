@@ -8,7 +8,8 @@ module.exports = {
       host: '127.0.0.1',
       user: 'root',
       password: 'root',
-      database: 'to_clock_in'
+      database: 'to_clock_in',
+      timezone: 'UTC'
     },
     migrations: {
       directory: './src/database/migrations'
@@ -37,7 +38,8 @@ module.exports = {
     connection: {
       database: 'to_clock_in',
       user: 'username',
-      password: 'password'
+      password: 'password',
+      timezone: 'UTC'
     },
     pool: {
       min: 2,
