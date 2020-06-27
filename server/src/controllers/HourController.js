@@ -1,6 +1,7 @@
 import connection from '../database/connection';
 
 export default {
+    /** Cria um ponto (data e hora) para um usuário */
     async create(req, res) {
         const { punch_clock } = req.body;
         const user_id = req.headers.authorization;
@@ -28,6 +29,7 @@ export default {
             return res.json(hours);
     },
 
+    /** Remove um ponto salvo para um usuário */
     async delete(req, res) {
         const { id } = req.params;
         const user_id = req.headers.authorization;
