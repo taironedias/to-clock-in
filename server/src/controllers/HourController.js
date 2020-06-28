@@ -35,23 +35,18 @@ export default {
         const user_id = req.headers.authorization;
         const { punch_clock } = req.body;
 
-        await connection('hours')
+        const data = await connection('hours')
             .where({
                 id,
                 user_id
             })
-            .update('punch_clock', punch_clock)
-            .then((data) => {
-                if (!data) {
-                    res.status(400).json({ error: 'Hour not found for update' });
-                }
+            .update('punch_clock', punch_clock);
 
-                return res.status(204).send();
-            })
-            .catch((err) => {
-                console.log(err);
-                throw err;
-            });
+        if (!data) {
+            res.status(400).json({ error: 'Hour not found for update' });
+        }
+
+        return res.status(204).send();
     },
 
     /** Remove um ponto salvo para um usuário */
