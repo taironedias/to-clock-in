@@ -29,6 +29,27 @@ export default {
             return res.json(hours);
     },
 
+    /** Retorna as horas que bateu o ponto de um dia específico */
+    async listHoursInDay(req, res) {
+        /**
+         * SELECT id, DATE_FORMAT(punch_clock, "%H:%i:%s") 
+         * FROM hours 
+         * WHERE user_id = :user_id 
+         *  AND DATE(punch_clock) = :yyyy_mm_dd
+         */
+        const user_id = req.headers.authorization;
+        const { day } = req.query;
+
+        const data = await connection('hours')
+            .whereRaw('hours.user_id = ? AND DATE(hours.punch_clock) = ?', [`${user_id}`, `${day}`])
+            .select(connection.raw('id, DATE_FORMAT(punch_clock, "%H:%i:%s") AS punch_clock'));
+
+        if (!data.length) {
+            res.status(400).json({ error: `Hour not found for day: ${day}` });
+        }
+
+        return res.json(data);
+    },
     /** Edita um ponto (data e hora) de um usuário */
     async update(req, res) {
         const { id } = req.params;
