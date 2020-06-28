@@ -1,4 +1,5 @@
 // Update with your config settings.
+const moment = require('moment');
 
 module.exports = {
 
@@ -9,7 +10,13 @@ module.exports = {
       user: 'root',
       password: 'root',
       database: 'to_clock_in',
-      timezone: 'UTC'
+      timezone: 'UTC',
+      typeCast: function (field, next) {
+        if (field.type == 'DATETIME') {
+          return moment(field.string()).format('YYYY-MM-DD HH:mm:ss');
+        }
+        return next();
+      }
     },
     migrations: {
       directory: './src/database/migrations'
