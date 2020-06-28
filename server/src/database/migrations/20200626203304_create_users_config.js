@@ -5,8 +5,8 @@ exports.up = function(knex) {
         table.integer('amount');
         table.integer('amount_goal');
         table.integer('hours_goal');
-        table.dateTime('start');
-        table.dateTime('end');
+        table.integer('start');
+        table.integer('end');
         
         table.foreign('user_id').references('id').inTable('users');
     });
