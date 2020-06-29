@@ -1,4 +1,5 @@
 import connection from '../database/connection';
+import moment from 'moment';
 
 export default {
     /** Cria um ponto (data e hora) para um usuário */
@@ -50,6 +51,75 @@ export default {
 
         return res.json(data);
     },
+
+    async listInfos(req, res) {
+        /**
+         * SELECT
+                punch_clock,
+                GROUP_CONCAT(TIME_TO_SEC(TIME(punch_clock))) as seconds
+            FROM hours h
+            WHERE h.user_id = 1
+                AND MONTH(punch_clock) = 6
+            GROUP BY DAY(punch_clock)
+            ORDER BY punch_clock ASC;
+         */
+        const user_id = req.headers.authorization;
+        const { date } = req.query;
+
+        const month = moment(date).format('M');
+
+        const response = await connection.select(connection.raw('DATE_FORMAT(punch_clock, "%Y-%m-%d") as date, GROUP_CONCAT(TIME_TO_SEC(TIME(punch_clock))) as seconds'))
+            .from('hours')
+            .whereRaw('user_id = ? AND MONTH(punch_clock) = ?', [`${user_id}`, `${month}`])
+            .groupByRaw('DAY(punch_clock)')
+            .orderBy('punch_clock', 'asc');
+
+        let workedHoursPerDay = response.map((value) => {
+            let arr_seconds = value.seconds.split(',');
+            let workedHours = 0;
+            let i;
+
+            for(i=0; i<arr_seconds.length; i++) {
+                if (arr_seconds[i+1]) {
+                    let diffWorkedHours = parseInt(arr_seconds[i+1]) - parseInt(arr_seconds[i]);
+                    workedHours += diffWorkedHours
+                    i++;
+                }
+            }
+
+            return {
+                date: value.date,
+                workedHours: workedHours
+            };
+        });
+
+        const totalWorkedHoursInDay = workedHoursPerDay.filter((value) => {
+            return value.date == date;
+        })[0].workedHours;
+
+        const weekNumber = moment(date).week();
+        let totalWordkedHoursInWeek = 0;
+        workedHoursPerDay.forEach((value, index, elements) => {
+            if (moment(value.date).week() === weekNumber) {
+                totalWordkedHoursInWeek += value.workedHours;
+            }
+        });
+
+        const usersConfig = await connection.from('users_config')
+            .where('user_id', user_id)
+            .select('*');
+        
+        const { amount, amount_goal, hours_goal, start, end } = usersConfig[0];
+        
+        const dayBalance = totalWorkedHoursInDay - (end - start);
+
+        return res.json({
+            totalWorkedHoursInDay,
+            dayBalance,
+            totalWordkedHoursInWeek
+        });
+    },
+
     /** Edita um ponto (data e hora) de um usuário */
     async update(req, res) {
         const { id } = req.params;
